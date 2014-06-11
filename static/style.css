@@ -1,0 +1,160 @@
+html {
+	height: 100%;
+	padding: 0px;
+	margin: 0px;
+}
+
+body {
+	height: 100%;
+	padding: 0px;
+	margin: 0px;
+	background: #fafafa;
+}
+
+a {
+	text-decoration: none;
+}
+
+#container {
+	height: 100%;
+}
+
+#sidebar {
+	border-right: 1px solid #333;
+	border-left: 1px solid #333;
+	border-top: 1px solid #333;
+	float: left;
+	display: inline;
+	background: #ccc;
+	margin-left: 15px;
+	margin-top: 70px;
+	-moz-box-shadow:    6px 0px 10px 5px #000000;
+	-webkit-box-shadow: 6px 0px 10px 5px #000000;
+	box-shadow:         4px 4px 5px 0px #aaa;
+}
+
+#sidebar, #sidebar a {
+	font-family: "Andale Mono", AndaleMono, monospace;
+	color: #333;
+	width: 300px;
+}
+
+#content {
+	display: block;
+	margin-left: 320px;
+	padding-top: 30px;
+	padding-bottom: 30px;
+}
+
+#page-title {
+	font-family: "Andale Mono", AndaleMono, monospace;
+	font-size: 30px;
+	color: #333;
+	width: 1200px;
+	margin-left: auto;
+	margin-right: auto;
+	height: 40px;
+}
+
+#page {
+	width: 1200px;
+	min-height: 500px;
+	margin-left: auto;
+	margin-right: auto;
+	border: 1px solid #999;
+	box-shadow: 0px 0px 5px 0px #aaa;
+	padding: 30px;
+	background: #fff;
+}
+
+.side-bar-title {
+	font-size: 40pt;
+	background: #d55;
+	text-align: center;
+	border-bottom: 3px solid #333;
+}
+
+.side-bar-header {
+	font-size: 28px;
+	height: 30px;
+	text-align: center;
+	border-bottom: 3px solid #333;
+	line-height: 30px;
+	padding: 5px;
+}
+
+.side-bar-item {
+	height: 30px;
+	border-bottom: 3px solid #333;
+	line-height: 30px;
+	padding: 10px;
+	background: #555;
+	color: #aaa;
+	text-align: center;
+}
+
+.side-bar-item:hover {
+	border-bottom: 3px solid #d55;
+	background: #5a5a5a;
+}
+
+
+
+.in {
+	outline: 0px solid transparent;
+	background: #555;
+	color: #ccc;
+	display: block;
+	white-space: pre;
+	padding: 10px;
+	font-family: Consolas, monaco, monospace;
+	-moz-box-shadow:    inset 0 0 6px #000000;
+	-webkit-box-shadow: inset 0 0 6px #000000;
+	box-shadow:         inset 0 0 6px #000;
+	
+}
+
+.out {
+	display: block;
+	white-space: pre;
+	font-family: Consolas, monaco, monospace;
+	overflow-x: auto;
+	max-height: 600px;
+}
+
+.v-cursor {
+	width: 100%;
+	border-bottom: 3px solid #666;
+}
+
+.line-marker {
+	white-space: pre;
+	display: inline;
+	vertical-align: top;
+	width: 100px;
+	float: left;
+	padding-top: 10px;
+	font-family: Consolas, monaco, monospace;
+	text-align: right;
+	font-weight: bold;
+	margin-left: -145px;
+}
+
+.line {
+	margin-bottom: 5px;
+}
+
+.line-block {
+	padding: 5px;
+
+}
+
+.data {
+	border-collapse: collapse;
+	background: #EEE;
+}
+
+.data td {
+	border: 1px solid #999;
+	padding: 8px;
+}

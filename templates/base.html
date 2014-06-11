@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>rpad.</title>
+	<link rel="stylesheet" href="/static/style.css">
+
+	{% block head %}{% endblock head %}
+</head>
+
+<body>
+	<div id="container">
+		<div id="sidebar">
+			<div class="side-bar-title">rpad.</div>
+			<a href="/about"><div class="side-bar-item">About</div></a>
+			<a href="/settings"><div class="side-bar-item">Settings</div></a>
+			<div class="side-bar-header">pads.</div>
+			<a href="/"><div class="side-bar-item">untitled pad</div></a>
+			<a href="#"><div class="side-bar-item">[new pad]</div></a>
+		</div>
+
+		<div id="content">
+			<div id='page-title'>
+				{% block title %}{% endblock title %}
+			</div>
+			<div id='page'>
+				{% block page %}{% endblock page %}
+			</div>
+		</div>
+	</div>
+	<div id="footer">
+	</div>
+</body>
