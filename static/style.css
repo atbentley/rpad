@@ -24,7 +24,6 @@ a {
 	border-left: 1px solid #333;
 	border-top: 1px solid #333;
 	float: left;
-	display: inline;
 	background: #ccc;
 	margin-left: 15px;
 	margin-top: 70px;
@@ -39,9 +38,29 @@ a {
 	width: 300px;
 }
 
+.tool-box {
+	-moz-box-shadow:    6px 0px 10px 5px #000000;
+	-webkit-box-shadow: 6px 0px 10px 5px #000000;
+	box-shadow:         4px 4px 5px 0px #aaa;
+	background: #ccc;
+	display: inline-block;
+	border-top: 1px solid #999;
+	border-bottom: 1px solid #999;
+	border-left: 1px solid #999;
+}
+
+.tool-box-item {
+	border-right: 1px solid #999;
+	font-family: "Andale Mono", AndaleMono, monospace;
+	font-size: 14pt;
+	color: #555;
+	display: inline-block;
+	padding: 10px 20px 10px 20px;
+}
+
 #content {
-	display: block;
-	margin-left: 320px;
+	margin-left: 400px;
+	margin-right: 100px;
 	padding-top: 30px;
 	padding-bottom: 30px;
 }
@@ -50,14 +69,14 @@ a {
 	font-family: "Andale Mono", AndaleMono, monospace;
 	font-size: 30px;
 	color: #333;
-	width: 1200px;
+	max-width: 1200px;
 	margin-left: auto;
 	margin-right: auto;
 	height: 40px;
 }
 
 #page {
-	width: 1200px;
+	max-width: 1200px;
 	min-height: 500px;
 	margin-left: auto;
 	margin-right: auto;
@@ -65,6 +84,19 @@ a {
 	box-shadow: 0px 0px 5px 0px #aaa;
 	padding: 30px;
 	background: #fff;
+}
+
+.clearfix:before,
+.clearfix:after {
+    content: " "; 
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+.clearfix {
+    *zoom: 1;
 }
 
 .side-bar-title {
