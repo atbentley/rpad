@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block head %}
+<script type="text/javascript" src="/static/js/settings.js"></script>
+
+{% endblock head %}
+
+{% block title %}
+settings.
+{% endblock title %}
+
+{% block page %}
+<div class='sub-heading'>r path:</div>
+<div id='r-path' class='in' contenteditable='true'>{{r_path}}</div>
+<div class='space'></div>
+<div class='sub-heading'>workspace:</div>
+<div id='workspace' class='in' contenteditable='true'>{{workspace}}</div>
+<div class='space'></div>
+<div class='button' onclick='save_settings()'>Save</div>
+</form>
+
+{% endblock page %}

@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<title>rpad.</title>
-	<link rel="stylesheet" href="/static/style.css">
+	<link rel="stylesheet" href="/static/css/linecon.css">
+	<link rel="stylesheet" href="/static/css/style.css">
 
 	{% block head %}{% endblock head %}
 </head>
@@ -11,12 +12,21 @@
 <body>
 	<div id="container">
 		<div id="sidebar">
-			<div class="side-bar-title">rpad.</div>
-			<a href="/about"><div class="side-bar-item">About</div></a>
-			<a href="/settings"><div class="side-bar-item">Settings</div></a>
-			<div class="side-bar-header">pads.</div>
-			<a href="/"><div class="side-bar-item">untitled pad</div></a>
-			<a href="#"><div class="side-bar-item">[new pad]</div></a>
+			<div class="sidebar-title">rpad.</div>
+			<div class="buttons">
+				<ul>
+					<a href='/new_pad'><li class="li_pen"></li></a>
+					<li class="li_vallet"></li>
+					<a href='/settings'><li class="li_settings"></li></a>
+				</ul>
+			</div>
+			{% for pad in pads %}
+			{% if loop.index-1 == pad_id %}
+			<a href="/pad/{{loop.index-1}}"><div class="sidebar-item-selected">{{pad.name}}</div></a>
+			{% else %}
+			<a href="/pad/{{loop.index-1}}"><div class="sidebar-item">{{pad.name}}</div></a>
+			{% endif %}
+			{% endfor %}
 		</div>
 
 		<div id="content">

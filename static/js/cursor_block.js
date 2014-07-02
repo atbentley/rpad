@@ -29,11 +29,8 @@ CursorBlock.prototype.on_key_down = function(e) {
     case RETURN_KEY:
         // Insert a new block
         this.blur();
-        console.log(this.getIndex());
-        var block = new CodeBlock(this.getIndex());
-        console.log(block.getIndex());
+        var block = new TextBlock(this.getIndex());
         var cursor = new CursorBlock(block.getIndex());
-        console.log(cursor.getIndex());
         block.focus();
         e.preventDefault();
         break;

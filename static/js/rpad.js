@@ -13,11 +13,15 @@ var blocks = [];
 var current_block;
 var state = STATE_EDIT;
 
+var pad_id = parseInt(document.URL.split('/').pop());
+var pad_name = 'untitled';
+
 var require = [
     '/static/js/async.js',
     '/static/js/block.js',
     '/static/js/code_block.js',
-    '/static/js/cursor_block.js'];
+    '/static/js/cursor_block.js',
+    '/static/js/text_block.js'];
 var loaded = -1;
 
 
@@ -33,11 +37,7 @@ function on_key_down(e) {
             var index = current_block.getIndex();
             current_block.remove();
             blocks[index].remove();
-            if (index == blocks.length) {
-                blocks[index-1].focus();
-            } else {
-                blocks[index].focus();
-            }
+            blocks[index-1].focus();
             state = STATE_EDIT;
             e.preventDefault();
             break;
@@ -53,7 +53,7 @@ function load_scripts() {
         page = document.getElementById('page');
         document.body.onkeydown = on_key_down;
         new CursorBlock();
-        var code_block = new CodeBlock();
+        var code_block = new TextBlock();
         new CursorBlock();
         code_block.focus();
     } else {
@@ -63,5 +63,20 @@ function load_scripts() {
         document.getElementsByTagName('head')[0].appendChild(script);
     }
 }
+
+
+function generate_pad_json() {
+    var data = {'name': pad_name, 'date': 0, 'content': []};
+    var serial;
+    for (var i=0; i<blocks.length; i++) {
+        serial = blocks[i].serialize();
+        if (serial != false) {
+            data['content'].append(serial);
+            serial = false;
+        }
+    }
+    return JSON.stringify(data);
+}
+
 
 window.onload = load_scripts;

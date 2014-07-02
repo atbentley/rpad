@@ -1,3 +1,9 @@
+
+/**
+ *
+ *
+ *
+ */
 function Block(insert_index) {
     insert_index = (typeof insert_index === 'undefined') ? blocks.length : insert_index;
     this.create_dom();
@@ -5,13 +11,19 @@ function Block(insert_index) {
     blocks.splice(insert_index, 0, this);
 }
 
-
+/*
+ * Remove the block's root DOM element and remove the block from
+ * the block list.
+ */
 Block.prototype.remove = function() {
     page.removeChild(this.dom);
     blocks.splice(this.getIndex(), 1);
 }
 
-
+/*
+ * Attach the root DOM element of the block to the page in the
+ * position specified by 'insert_index'.
+ */
 Block.prototype.attach_dom = function(insert_index) {
     if (insert_index == blocks.length) {
         // Append to end of page
@@ -22,37 +34,48 @@ Block.prototype.attach_dom = function(insert_index) {
     }
 }
 
-
-Block.prototype.ready_delete = function() {
-    current_bl
-    blocks[this.getIndex()].dom.style.outline = '3px dashed #d88';
-}
-
-
+/**
+ * Return the block's position in the page.
+ */
 Block.prototype.getIndex = function() {
     return blocks.indexOf(this);
 }
 
-/* Overwrite this */
+/**
+ * Create the DOM structure for the block. The root DOM element
+ * should be of class 'block'.
+ *
+ * This methos should be overwritten.
+ */
 Block.prototype.create_dom = function() {
     this.dom = document.createElement('div');
     this.dom.setAttribute('class', 'block');
 }
 
-
-/* Extend this */
+/**
+ * Set focus to the current block.
+ *
+ * This method should be extended.
+ */
 Block.prototype.focus = function() {
     current_block = this;
 }
 
-
-/* Extend this */
+/**
+ * Remove focus from the current block.
+ *
+ * This method should be overwritten.
+ */
 Block.prototype.blur = function() {
     
 }
 
-
-/* Overwrite this */
+/**
+ * This method is called for each keydown event when the
+ * block is active.
+ *
+ * This method should be overwritten.
+ */
 Block.prototype.handle_input = function(e) {
 
 }

@@ -47,6 +47,7 @@ class R:
                 break
             elif data == '+ ':
                 # More input required
-                pass
+                code = R.MORE
+                break
             out += data + self._proc.stdout.readline()
-        return out
+        return code, out

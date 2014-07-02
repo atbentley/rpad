@@ -8,4 +8,11 @@ about.
 {% endblock title %}
 
 {% block page %}
+{% if notices.r_path == True %}
+	<div class='notice'>R path does not exist.</div>
+{% endif %}
+{% if notices.workspace == True %}
+	<div class='notice'>Workspace does not exist.</div>
+{% endif %}
+<p>rpad is an interactive document editor which allows the embedding and running of R code.</p>
 {% endblock page %}
