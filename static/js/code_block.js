@@ -1,11 +1,13 @@
-function CodeBlock(insert_index) {
-    Block.call(this, insert_index);
+PAD.CodeBlock = function(insert_index) {
+    PAD.Block.call(this, insert_index);
 }
-CodeBlock.prototype = Object.create(Block.prototype);
-CodeBlock.prototype.constructor = CodeBlock;
+PAD.CodeBlock.prototype = Object.create(PAD.Block.prototype);
+PAD.CodeBlock.prototype.constructor = PAD.CodeBlock;
+PAD.CodeBlock.document_block = false;
+PAD.block_types.push(PAD.CodeBlock);
 
 
-CodeBlock.prototype.create_dom = function() {
+PAD.CodeBlock.prototype.create_dom = function() {
     this.dom = document.createElement('div');
     this.dom.setAttribute('class', 'block');
 
@@ -19,14 +21,14 @@ CodeBlock.prototype.create_dom = function() {
 }
 
 
-CodeBlock.prototype.delete_out_lines = function() {
+PAD.CodeBlock.prototype.delete_out_lines = function() {
     while (this.dom.children.length != 1) {
         this.dom.removeChild(this.dom.children[1]);
     }
 }
 
 
-CodeBlock.prototype.add_out_line = function(html) {    
+PAD.CodeBlock.prototype.add_out_line = function(html) {    
     var out_line = document.createElement('div');
     out_line.setAttribute('class', 'out');
     out_line.innerHTML = html;
@@ -35,37 +37,37 @@ CodeBlock.prototype.add_out_line = function(html) {
 }
 
 
-CodeBlock.prototype.focus = function() {
-    Block.prototype.focus.bind(this)();
+PAD.CodeBlock.prototype.focus = function() {
+    PAD.Block.prototype.focus.bind(this)();
     this.in_line.focus();
 }
 
 
-CodeBlock.prototype.blur = function() {
+PAD.CodeBlock.prototype.blur = function() {
     this.in_line.blur();
 }
 
 
-CodeBlock.prototype.on_code_evaluated = function(result) {
+PAD.CodeBlock.prototype.on_code_evaluated = function(result) {
     this.delete_out_lines();
     result = JSON.parse(result);
     for (var i = 0; i < result.length; i++) {
         this.add_out_line(result[i]);
     }
     
-    if (current_block == this) {
+    if (PAD.current_block == this) {
         this.blur();
-        blocks[this.getIndex()+1].focus();
+        PAD.blocks[this.getIndex()+1].focus();
     }
 }
 
 
-CodeBlock.prototype.on_key_down = function(e) {
+PAD.CodeBlock.prototype.on_key_down = function(e) {
     switch(e.which) {
-    case RETURN_KEY:
+    case PAD.RETURN_KEY:
         if (e.shiftKey == true) {
             // Evalutate code
-            var url = '/r?pad=' + pad_id + '&expr=' + encodeURIComponent(this.in_line.innerText);
+            var url = '/r?pad=' + PAD.id + '&expr=' + encodeURIComponent(this.in_line.innerText);
             async('GET', url, this.on_code_evaluated.bind(this));
             e.preventDefault();
         } else {
@@ -80,24 +82,24 @@ CodeBlock.prototype.on_key_down = function(e) {
         }
         break;
 
-    case UP_KEY:
+    case PAD.UP_KEY:
         var sel = window.getSelection();
         if (sel.type == "Caret" && sel.baseOffset == 0) {
             // Make the v cursor above the current line active
             this.blur();
-            blocks[this.getIndex()-1].focus();
+            PAD.blocks[this.getIndex()-1].focus();
             e.preventDefault();
         }
         break;
 
-    case DOWN_KEY:
+    case PAD.DOWN_KEY:
         var sel = window.getSelection();
         if (sel.type == "Caret" && (sel.baseOffset == this.in_line.innerText.length ||
                 (sel.baseOffset == this.in_line.innerText.length-1 && 
                 this.in_line.innerText[sel.baseOffset] == '\n'))) {
             // Make the v cursor below the current line active
             this.blur();
-            blocks[this.getIndex()+1].focus();
+            PAD.blocks[this.getIndex()+1].focus();
             e.preventDefault();
             break;
         }
@@ -105,6 +107,6 @@ CodeBlock.prototype.on_key_down = function(e) {
 }
 
 
-CodeBlock.prototype.on_in_line_click = function(e) {
-
+PAD.CodeBlock.prototype.on_in_line_click = function(e) {
+    this.focus();
 }

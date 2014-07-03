@@ -1,11 +1,13 @@
-function TextBlock(insert_index) {
+PAD.TextBlock = function(insert_index) {
     Block.call(this, insert_index);
 }
-TextBlock.prototype = Object.create(Block.prototype);
-TextBlock.prototype.constructor = TextBlock;
+PAD.TextBlock.prototype = Object.create(PAD.Block.prototype);
+PAD.TextBlock.prototype.constructor = PAD.TextBlock;
+PAD.TextBlock.document_block = false;
+PAD.block_types.push(PAD.TextBlock);
 
 
-TextBlock.prototype.create_dom = function() {
+PAD.TextBlock.prototype.create_dom = function() {
     this.dom = document.createElement('div');
     this.dom.setAttribute('class', 'block text');
     this.dom.setAttribute('contenteditable', true);
@@ -13,28 +15,28 @@ TextBlock.prototype.create_dom = function() {
 }
 
 
-TextBlock.prototype.focus = function() {
-    Block.prototype.focus.bind(this)();
+PAD.TextBlock.prototype.focus = function() {
+    PAD.Block.prototype.focus.bind(this)();
     this.dom.focus();
 }
 
 
-TextBlock.prototype.blur = function() {
+PAD.TextBlock.prototype.blur = function() {
     this.dom.blur();
 }
 
 
-TextBlock.prototype.on_key_down = function(e) {
+PAD.TextBlock.prototype.on_key_down = function(e) {
     switch (e.which) {
-    case RETURN_KEY:
+    case PAD.RETURN_KEY:
         e.preventDefault();
         break;
 
-    case UP_KEY:
+    case PAD.UP_KEY:
         e.preventDefault();
         break;
 
-    case DOWN_KEY:
+    case PAD.DOWN_KEY:
         e.preventDefault();
         break;
     }

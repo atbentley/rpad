@@ -1,53 +1,68 @@
 
 /**
- *
- *
- *
+ * The base class for all blocks. This class shouldn't directly be
+ * added to the page but rather other blocks should inherit this
+ * class and then added to the page.
  */
-function Block(insert_index) {
-    insert_index = (typeof insert_index === 'undefined') ? blocks.length : insert_index;
+PAD.Block = function(insert_index) {
+    insert_index = (typeof insert_index === 'undefined') ? PAD.blocks.length : insert_index;
     this.create_dom();
     this.attach_dom(insert_index);
-    blocks.splice(insert_index, 0, this);
+    PAD.blocks.splice(insert_index, 0, this);
 }
+PAD.Block.document_block = false;
+PAD.block_types.push(PAD.Block);
 
-/*
+
+/**
  * Remove the block's root DOM element and remove the block from
  * the block list.
  */
-Block.prototype.remove = function() {
+PAD.Block.prototype.remove = function() {
     page.removeChild(this.dom);
-    blocks.splice(this.getIndex(), 1);
+    PAD.blocks.splice(this.getIndex(), 1);
 }
 
-/*
+/**
  * Attach the root DOM element of the block to the page in the
  * position specified by 'insert_index'.
  */
-Block.prototype.attach_dom = function(insert_index) {
-    if (insert_index == blocks.length) {
+PAD.Block.prototype.attach_dom = function(insert_index) {
+    if (insert_index == PAD.blocks.length) {
         // Append to end of page
         page.appendChild(this.dom);
     } else {
         // Insert at insert_index
-        page.insertBefore(this.dom, blocks[insert_index].dom);
+        page.insertBefore(this.dom, PAD.blocks[insert_index].dom);
     }
 }
+
+
+/**
+ * Return a JSON representation of the block.
+ * If the block is not to be serialized (e.g. the cursor block)
+ * this function should return false.
+ *
+ * This method should be overwritten.
+ */
+ PAD.Block.prototype.serialize = function() {
+    return false;
+ }
 
 /**
  * Return the block's position in the page.
  */
-Block.prototype.getIndex = function() {
-    return blocks.indexOf(this);
+PAD.Block.prototype.getIndex = function() {
+    return PAD.blocks.indexOf(this);
 }
 
 /**
  * Create the DOM structure for the block. The root DOM element
  * should be of class 'block'.
  *
- * This methos should be overwritten.
+ * This method should be overwritten.
  */
-Block.prototype.create_dom = function() {
+PAD.Block.prototype.create_dom = function() {
     this.dom = document.createElement('div');
     this.dom.setAttribute('class', 'block');
 }
@@ -57,8 +72,8 @@ Block.prototype.create_dom = function() {
  *
  * This method should be extended.
  */
-Block.prototype.focus = function() {
-    current_block = this;
+PAD.Block.prototype.focus = function() {
+    PAD.current_block = this;
 }
 
 /**
@@ -66,7 +81,7 @@ Block.prototype.focus = function() {
  *
  * This method should be overwritten.
  */
-Block.prototype.blur = function() {
+PAD.Block.prototype.blur = function() {
     
 }
 
@@ -76,6 +91,6 @@ Block.prototype.blur = function() {
  *
  * This method should be overwritten.
  */
-Block.prototype.handle_input = function(e) {
+PAD.Block.prototype.handle_input = function(e) {
 
 }
