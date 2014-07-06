@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<title>rpad.</title>
+	<link rel="stylesheet" href="/static/css/font-awesome.css">
 	<link rel="stylesheet" href="/static/css/linecon.css">
 	<link rel="stylesheet" href="/static/css/style.css">
 
@@ -15,9 +16,10 @@
 			<div class="sidebar-title">rpad.</div>
 			<div class="buttons">
 				<ul>
-					<a href='/new_pad'><li class="li_pen"></li></a>
-					<li class="li_vallet"></li>
-					<a href='/settings'><li class="li_settings"></li></a>
+					<a href='/new_pad'><li class="fa fa-pencil"></li></a>
+					<li class="fa fa-cloud-upload"></li>
+					<li class="fa fa-info-circle"></li>
+					<a href='/settings'><li class="fa fa-gear"></li></a>
 				</ul>
 			</div>
 			{% for pad in pads %}
@@ -30,12 +32,7 @@
 		</div>
 
 		<div id="content">
-			<div id='page-title'>
-				{% block title %}{% endblock title %}
-			</div>
-			<div id='page'>
-				{% block page %}{% endblock page %}
-			</div>
+			{% block content %}{% endblock %}
 		</div>
 	</div>
 	<div id="footer">

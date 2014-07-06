@@ -8,5 +8,22 @@
 untitled pad.
 {% endblock title %}
 
-{% block page %}
-{% endblock page %}
+{% block content %}
+<div id='toolbar'>
+	<div class='row'>
+		<a href="#" title="Toggle R process"><span class="fa fa-power-off"></span></a>
+		<div contenteditable="true" id='page-title'>untitled pad.</div>
+	</div>
+	<div class='row'>
+		<span title="Save" class="fa fa-floppy-o"></span>
+		<span title="Export" class="fa fa-cloud-download"></span>
+		<div class='divider'></div>
+		<span title="Insert Code" class="fa fa-code"></span>
+		<span title="Insert image" class="fa fa-image"></span>
+		<div class='divider'></div>
+		<span title="Print" class="fa fa-print"></span>
+		<span title="Download PDF" class="fa fa-file-pdf-o"></span>
+	</div>
+</div>
+<div id='page'></div>
+{% endblock content %}
