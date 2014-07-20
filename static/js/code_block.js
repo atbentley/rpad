@@ -3,6 +3,7 @@ PAD.CodeBlock = function(insert_index) {
 }
 PAD.CodeBlock.prototype = Object.create(PAD.Block.prototype);
 PAD.CodeBlock.prototype.constructor = PAD.CodeBlock;
+PAD.CodeBlock.block_name = "Code";
 PAD.CodeBlock.document_block = false;
 PAD.block_types.push(PAD.CodeBlock);
 
@@ -10,12 +11,13 @@ PAD.block_types.push(PAD.CodeBlock);
 PAD.CodeBlock.prototype.create_dom = function() {
     this.dom = document.createElement('div');
     this.dom.setAttribute('class', 'block');
-
+    //this.dom.onclick = this.focus;
     this.in_line = document.createElement('div');
     this.in_line.setAttribute('class', 'in');
     this.in_line.setAttribute('contenteditable', true);
     this.in_line.spellcheck = false;
-    this.in_line.onmousedown = this.on_in_line_click;
+    //this.in_line.onmousedown = this.on_in_line_click;
+    //this.in_line.onfocus = this.focus;
 
     this.dom.appendChild(this.in_line);
 }

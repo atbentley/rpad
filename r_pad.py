@@ -182,11 +182,11 @@ class RPad(Flask):
             code, result = self.r_procs[pad].write(expr)
             if code == R.NORMAL and result != '':
                 #self.r_procs[0].write('.last.value <- .Last.value')
-                #_, result_type = self.r_procs[0].write('class(.Last.value)')
+                _, result_type = self.r_procs[0].write('class(.Last.value)')
                 #self.r_procs[0].write('.Last.value <- .last.value')
-                #result_type = result_type[result_type.index(']')+2:]
-                #result_type = result_type.replace("\n", '').replace("\r", '').replace("\"", '')
-                results.append(result)
+                result_type = result_type[result_type.index(']')+2:]
+                result_type = result_type.replace("\n", '').replace("\r", '').replace("\"", '')
+                results.append(result_handlers.get(result_type)(result))
             elif code == R.MORE:
                 pass
 

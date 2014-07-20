@@ -29,7 +29,8 @@ var require = [
     '/static/js/block.js',
     '/static/js/code_block.js',
     '/static/js/cursor_block.js',
-    '/static/js/text_block.js'];
+    '/static/js/text_block.js',
+    '/static/js/choice_block.js'];
 var loaded = -1;  // Count of additional JS files loaded
 
 
@@ -63,9 +64,7 @@ function load_scripts() {
         // Finished loading, begin execution
         page = document.getElementById('page');
         document.body.onkeydown = on_key_down;
-        new PAD.CursorBlock();
-        var code_block = new PAD.CodeBlock();
-        new PAD.CursorBlock();
+        var code_block = new PAD.TextBlock();
         code_block.focus();
     } else {
         // Continue loading additional JS files
@@ -73,6 +72,19 @@ function load_scripts() {
         script.src = require[loaded];
         script.onload = load_scripts;
         document.getElementsByTagName('head')[0].appendChild(script);
+    }
+}
+
+
+function button_clicked(button) {
+    switch (button.id) {
+    case 'btn_save':
+        break;
+    case 'btn_code':
+        var code_block = new PAD.CodeBlock(PAD.current_block.getIndex()+1);
+        var text_block = new PAD.TextBlock(code_block.getIndex()+1);
+        code_block.focus();
+        break;
     }
 }
 

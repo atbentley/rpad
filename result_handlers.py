@@ -2,7 +2,7 @@ import re
 
 
 def get(type_):
-    return globals().get(type_, default)
+    return globals().get(type_.replace('.', '_'), default)
 
 re_row = re.compile('\s*\[(\d+)\]')
 def array_like(output):
@@ -40,6 +40,41 @@ def matrix(output):
             output.append([])
         output[row].extend(re_matrix_row.sub('', line).split())
 
+    html = "<table class='data'>"
+    for row in output:
+        html += "<tr>"
+        for data in row:
+            html += "<td>%s</td>" % data
+        html += "</tr>"
+    html += "</table>"
+    return html
+
+
+def data_frame(output):
+    def get_columns(line):
+        columns = []
+        ws = True
+        for i, c in enumerate(line):
+            if c == ' ':
+                ws = True
+            elif ws is True:
+                ws = False
+                columns.append(i)
+        print(columns)
+        return columns
+
+    lines = output.split("\n")
+    columns = []
+    for line in lines:
+        if line == '':
+            continue
+        columns.append(get_columns(line))
+    columns[0].insert(0, 0)
+    return output
+    output = []
+    for line in lines:
+        output.append(line.split("\t"))
+    output[0].insert(0, '')
     html = "<table class='data'>"
     for row in output:
         html += "<tr>"

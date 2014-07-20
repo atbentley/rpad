@@ -1,8 +1,7 @@
-
 /**
  * The base class for all blocks. This class shouldn't directly be
  * added to the page but rather other blocks should inherit this
- * class and then added to the page.
+ * class and then be added to the page.
  */
 PAD.Block = function(insert_index) {
     insert_index = (typeof insert_index === 'undefined') ? PAD.blocks.length : insert_index;
@@ -10,8 +9,9 @@ PAD.Block = function(insert_index) {
     this.attach_dom(insert_index);
     PAD.blocks.splice(insert_index, 0, this);
 }
+PAD.Block.block_name = "Block";
 PAD.Block.document_block = false;
-PAD.block_types.push(PAD.Block);
+//PAD.block_types.push(PAD.Block);
 
 
 /**
@@ -73,6 +73,9 @@ PAD.Block.prototype.create_dom = function() {
  * This method should be extended.
  */
 PAD.Block.prototype.focus = function() {
+    if (PAD.current_block === 'undefined') {
+        PAD.current_block.blur();
+    }
     PAD.current_block = this;
 }
 

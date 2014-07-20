@@ -3,8 +3,9 @@ PAD.CursorBlock = function(insert_index) {
 }
 PAD.CursorBlock.prototype = Object.create(PAD.Block.prototype);
 PAD.CursorBlock.prototype.constructor = PAD.CursorBlock;
+PAD.CursorBlock.block_name = "Cursor";
 PAD.CursorBlock.document_block = false;
-PAD.block_types.push(PAD.CursorBlock);
+//PAD.block_types.push(PAD.CursorBlock);
 
 
 PAD.CursorBlock.prototype.create_dom = function() {
@@ -31,7 +32,7 @@ PAD.CursorBlock.prototype.on_key_down = function(e) {
     case PAD.RETURN_KEY:
         // Insert a new block
         this.blur();
-        var block = new PAD.CodeBlock(this.getIndex());
+        var block = new PAD.ChoiceBlock(this.getIndex());
         var cursor = new PAD.CursorBlock(block.getIndex());
         block.focus();
         e.preventDefault();
