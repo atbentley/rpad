@@ -1,24 +1,25 @@
 import os
 import subprocess
+import socket
+import time
 
 
 class R:
-    NORMAL = 0
-    MORE = 1
-    ERROR = 2
-    def __init__(self, r_home='', cwd=None):
-        # -q to hide start up message
-        # --ess to force the program into interactive mode
-        cmd = [os.path.join(r_home, 'R'), "-q", "--ess"]
-        self._proc = subprocess.Popen(
-            cmd,
-            cwd=cwd,
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE)
+    def __init__(self):
+        # Spawn R running Rserve in a subprocess.
+        # We use Rserve.dbg so that R doesn't get put into
+        # daemon mode, this allows us to kill the process
+        # using terminate().
+        # We also send the process's stdout to DEVNULL
+        # since we are not interested in it.
+        cmd = ['R' ,'CMD', 'Rserve.dbg']
+        self.devnull = open(os.devnull, 'w')
+        self._proc = subprocess.Popen(cmd, stdout=self.devnull)
 
-        # Remove prompt (> )
-        self._proc.stdout.read(2)
+        # wait for Rserve to start accepting connections
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        while sock.connect_ex(('127.0.0.1', 6311)) != 0:
+            time.sleep(0.01)
 
     def __del__(self):
         self.terminate()
@@ -28,26 +29,6 @@ class R:
 
     def terminate(self):
         if self.poll() is None:
-            self._proc.stdin.write("q(save=\"no\")\n")
             self._proc.terminate()
-
-    def write(self, expr):
-        if not expr.endswith("\n"):
-            expr += "\n"
-
-        self._proc.stdin.write(expr)
-
-        # Get result
-        out = ''
-        code = R.NORMAL
-        while True:
-            data = self._proc.stdout.read(2)
-            if data == '> ':
-                # Reached end of output
-                break
-            elif data == '+ ':
-                # More input required
-                code = R.MORE
-                break
-            out += data + self._proc.stdout.readline()
-        return code, out
+            # Make sure to close DEVNULL as its no longer needed.
+            self.devnull.close()

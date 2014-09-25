@@ -29,8 +29,7 @@ var require = [
     '/static/js/block.js',
     '/static/js/code_block.js',
     '/static/js/cursor_block.js',
-    '/static/js/text_block.js',
-    '/static/js/choice_block.js'];
+    '/static/js/text_block.js'];
 var loaded = -1;  // Count of additional JS files loaded
 
 
