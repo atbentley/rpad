@@ -18,7 +18,7 @@ class R:
 
         # wait for Rserve to start accepting connections
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        while sock.connect_ex(('127.0.0.1', 6311)) != 0:
+        while sock.connect_ex(('127.0.0.1', 6311)) != 0:  # TODO - make this time out
             time.sleep(0.01)
 
     def __del__(self):

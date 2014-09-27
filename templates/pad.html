@@ -5,14 +5,14 @@
 {% endblock head %}
 
 {% block title %}
-untitled pad.
+rpad - {{current_pad.name}}
 {% endblock title %}
 
 {% block content %}
 <div id='toolbar'>
 	<div class='row'>
 		<a href="#" title="Toggle R process"><span class="fa fa-power-off"></span></a>
-		<div contenteditable="true" id='page-title'>untitled pad.</div>
+		<div contenteditable="true" id='page-title'>{{current_pad.name}}</div>
 	</div>
 	<div class='row'>
 		<span id='btn_save' onclick="button_clicked(this)" title="Save" class="fa fa-floppy-o"></span>

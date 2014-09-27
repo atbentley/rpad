@@ -1,14 +1,13 @@
 import json
 import os
-import socket
-import subprocess
 import urllib
 import time
 from HTMLParser import HTMLParser
 
 import pyRserve
-from flask import Flask, request, render_template, redirect
+from flask import Flask, request, render_template, redirect, abort
 
+from models import db, Pad, Block
 from r import R
 
 html_parser = HTMLParser()
@@ -17,6 +16,8 @@ html_parser = HTMLParser()
 class rpad(Flask):
     def __init__(self):
         Flask.__init__(self, 'rpad')
+
+        self.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
 
         # Create R subprocess.
         # A single R instance will serve all pads using Rserve.
@@ -30,27 +31,37 @@ class rpad(Flask):
         self.add_url_rule('/', 'index', self.handle_index)
         self.add_url_rule('/about', 'about', self.handle_about)
         self.add_url_rule('/new_pad', 'new_pad', self.handle_new_pad)
-        self.add_url_rule('/pad/<int:pad>', 'pad', self.handle_pad)
+        self.add_url_rule('/pad/<int:pad_id>', 'pad', self.handle_pad)
         self.add_url_rule('/r', 'r', self.handle_r_eval)
 
     def handle_index(self):
         return self.handle_about()
 
     def handle_about(self):
-        return render_template('about.html')
+        pads = Pad.query.all()
+        return render_template('about.html', pads=pads)
 
     def handle_new_pad(self):
-        return redirect('pad/0')
+        pad = Pad(name='Untitled Pad')
+        db.session.add(pad)
+        db.session.commit()
+        return redirect('pad/%i' % (pad.id))
 
-    def handle_pad(self, pad):
+    def handle_pad(self, pad_id):
+        pad = Pad.query.get(pad_id)
+        if pad is None:
+            abort(404)
+        pads = Pad.query.all()
+
         # Check to see if this pad has a pyRserve connection
-        if pad in self.r_conn:
-            if self.r_conn[pad].isClosed():
+        if pad_id in self.r_conn:
+            if self.r_conn[pad_id].isClosed:
                 # Re-open connection if it was closed
-                self.r_conn[pad].connect()
+                self.r_conn[pad_id].connect()
         else:
-            self.r_conn[pad] = pyRserve.connect()
-        return render_template('pad.html', pad_id=pad)
+            self.r_conn[pad_id] = pyRserve.connect()
+
+        return render_template('pad.html', current_pad=pad, pads=pads)
 
     def handle_r_eval(self):
         exprs = request.args.get('expr')
@@ -61,6 +72,9 @@ class rpad(Flask):
         return json.dumps(str(result))
 
 
+app = rpad()
+db.init_app(app)
+
+
 if __name__ == '__main__':
-    app = rpad()
     app.run(debug=True, use_reloader=False)

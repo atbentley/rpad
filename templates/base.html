@@ -2,7 +2,7 @@
 <html lang="en">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title>rpad.</title>
+	<title>{% block title %}rpad{% endblock title %}</title>
 	<link rel="stylesheet" href="/static/css/font-awesome.css">
 	<link rel="stylesheet" href="/static/css/linecon.css">
 	<link rel="stylesheet" href="/static/css/style.css">
@@ -23,10 +23,10 @@
 				</ul>
 			</div>
 			{% for pad in pads %}
-			{% if loop.index-1 == pad_id %}
-			<a href="/pad/{{loop.index-1}}"><div class="sidebar-item-selected">{{pad.name}}</div></a>
+			{% if current_pad and pad.id == current_pad.id %}
+			<a href="/pad/{{pad.id}}"><div class="sidebar-item-selected">{{pad.name}}</div></a>
 			{% else %}
-			<a href="/pad/{{loop.index-1}}"><div class="sidebar-item">{{pad.name}}</div></a>
+			<a href="/pad/{{pad.id}}"><div class="sidebar-item">{{pad.name}}</div></a>
 			{% endif %}
 			{% endfor %}
 		</div>
