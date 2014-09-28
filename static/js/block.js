@@ -7,11 +7,21 @@ PAD.Block = function(insert_index) {
     insert_index = (typeof insert_index === 'undefined') ? PAD.blocks.length : insert_index;
     this.create_dom();
     this.attach_dom(insert_index);
+    this.id = null;
     PAD.blocks.splice(insert_index, 0, this);
 }
 PAD.Block.block_name = "Block";
 PAD.Block.document_block = false;
 //PAD.block_types.push(PAD.Block);
+
+/**
+ * Construct a block from the supplied JSON.
+ *
+ * This method should be overwritten.
+ */
+PAD.Block.prototype.from_json = function(json) {
+    return new PAD.Block();
+}
 
 
 /**

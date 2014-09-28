@@ -5,7 +5,19 @@ PAD.CodeBlock.prototype = Object.create(PAD.Block.prototype);
 PAD.CodeBlock.prototype.constructor = PAD.CodeBlock;
 PAD.CodeBlock.block_name = "Code";
 PAD.CodeBlock.document_block = false;
-PAD.block_types.push(PAD.CodeBlock);
+PAD.block_types['code'] = PAD.CodeBlock;
+
+
+PAD.CodeBlock.from_json = function(json) {
+    json['content'] = JSON.parse(json['content']);
+    var code_block = new PAD.CodeBlock(json['position']);
+    code_block.id = json['id'];
+    code_block.in_line.innerHTML = json['content']['input'];
+    for (var i=0; i<json['content']['output'].length; i++) {
+        code_block.add_out_line(json['content']['output'][i]);
+    }
+    return code_block;
+}
 
 
 PAD.CodeBlock.prototype.create_dom = function() {
@@ -20,6 +32,23 @@ PAD.CodeBlock.prototype.create_dom = function() {
     //this.in_line.onfocus = this.focus;
 
     this.dom.appendChild(this.in_line);
+}
+
+
+PAD.CodeBlock.prototype.serialize = function () {
+    var data = {
+        'id': this.id,
+        'type': 'code',
+        'content': {
+            'input': this.in_line.innerHTML,
+            'output': []},
+        'position': this.getIndex()
+    };
+    for (var i = 0; i<this.dom.children.length-1; i++) {
+        data['content']['output'].push(this.dom.children[i+1].innerHTML);
+    }
+    data['content'] = JSON.stringify(data['content']);
+    return data;
 }
 
 

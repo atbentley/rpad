@@ -5,7 +5,15 @@ PAD.TextBlock.prototype = Object.create(PAD.Block.prototype);
 PAD.TextBlock.prototype.constructor = PAD.TextBlock;
 PAD.TextBlock.block_name = "Text";
 PAD.TextBlock.document_block = false;
-PAD.block_types.push(PAD.TextBlock);
+PAD.block_types['text'] = PAD.TextBlock;
+
+
+PAD.TextBlock.from_json = function(json) {
+    var text_block = new PAD.TextBlock(json['position']);
+    text_block.id = json['id'];
+    text_block.dom.innerHTML = json['content'];
+    return text_block;
+}
 
 
 PAD.TextBlock.prototype.create_dom = function() {
@@ -13,6 +21,17 @@ PAD.TextBlock.prototype.create_dom = function() {
     this.dom.setAttribute('class', 'block text');
     this.dom.setAttribute('contenteditable', true);
     this.dom.onfocus = this.focus.bind(this);
+}
+
+
+PAD.TextBlock.prototype.serialize = function () {
+    var data = {
+        'id': this.id,
+        'type': 'text',
+        'content': this.dom.innerHTML,
+        'position': this.getIndex()
+    }
+    return data;
 }
 
 

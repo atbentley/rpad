@@ -63,8 +63,9 @@ function load_scripts() {
         // Finished loading, begin execution
         page = document.getElementById('page');
         document.body.onkeydown = on_key_down;
-        var code_block = new PAD.TextBlock();
-        code_block.focus();
+        async('GET', '/api/pad/' + PAD.id, update_pad);
+        //var code_block = new PAD.TextBlock();
+        //code_block.focus();
     } else {
         // Continue loading additional JS files
         var script = document.createElement('script');
@@ -78,6 +79,8 @@ function load_scripts() {
 function button_clicked(button) {
     switch (button.id) {
     case 'btn_save':
+        var json = generate_pad_json();
+        async('PUT', '/api/pad/' + PAD.id, function(){}, json);
         break;
     case 'btn_code':
         var code_block = new PAD.CodeBlock(PAD.current_block.getIndex()+1);
@@ -88,13 +91,23 @@ function button_clicked(button) {
 }
 
 
+function update_pad(json) {
+    json = JSON.parse(json);
+    for (var i=0; i<json['blocks'].length; i++) {
+        var block = json['blocks'][i];
+        PAD.block_types[block.type].from_json(block);
+    }
+    PAD.blocks[0].focus()
+}
+
+
 function generate_pad_json() {
-    var data = {'name': pad_name, 'date': 0, 'content': []};
+    var data = {'name': PAD.name, 'id': PAD.id, 'blocks': []};
     var serial;
-    for (var i=0; i<blocks.length; i++) {
-        serial = blocks[i].serialize();
+    for (var i=0; i<PAD.blocks.length; i++) {
+        serial = PAD.blocks[i].serialize();
         if (serial != false) {
-            data['content'].append(serial);
+            data['blocks'].push(serial);
             serial = false;
         }
     }

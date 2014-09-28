@@ -1,5 +1,7 @@
-function async(method, url, callback) {
+function async(method, url, callback, data) {
     var request = new XMLHttpRequest();
+    request.open(method, url);
+    request.setRequestHeader('Content-Type', 'application/json');
     request.onreadystatechange = function() {
         if (request.readyState == 4) {
             if (request.status == 200 || window.location.href.indexOf('http') == -1) {
@@ -7,6 +9,5 @@ function async(method, url, callback) {
             }
         }
     }
-    request.open(method, url);
-    request.send(null);
+    request.send(data);
 }
