@@ -1,0 +1,5 @@
+rpad
+flask=0.10.1
+Flask-SQLAlchemy=2.0
+Flask-restless=0.14.2
+pyRserve=0.8.1
