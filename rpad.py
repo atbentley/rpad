@@ -36,9 +36,9 @@ class rpad(Flask):
 
         # API routing
         self.api_manager.create_api(Pad, include_columns=['id', 'name'], 
-                                    collection_name='pads', methods=['GET_MANY'])
-        self.api_manager.create_api(Pad, methods=['GET', 'POST, DELETE', 'PUT'])
-        self.api_manager.create_api(Block, methods=['GET, POST', 'PUT', 'DELETE'])
+                                    collection_name='pads', methods=['GET'])
+        self.api_manager.create_api(Pad, methods=['GET', 'POST', 'DELETE', 'PUT'])
+        self.api_manager.create_api(Block, methods=['GET, POST', 'DELETE', 'PUT'])
 
     def handle_index(self):
         return self.handle_about()
@@ -81,9 +81,8 @@ class rpad(Flask):
         return json.dumps([str(result)])
 
 
-app = rpad(db)
-db.init_app(app)
-
-
 if __name__ == '__main__':
+    app = rpad(db)
+    db.init_app(app)
+    db.create_all(app=app)
     app.run(debug=True, use_reloader=False)

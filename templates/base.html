@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<title>{% block title %}rpad{% endblock title %}</title>
-	<link rel="stylesheet" href="/static/css/font-awesome.css">
+	<link rel="stylesheet" href="/static/css/font-awesome.min.css">
 	<link rel="stylesheet" href="/static/css/style.css">
 
 	{% block head %}{% endblock head %}
@@ -23,10 +23,15 @@
 			</div>
 			{% for pad in pads %}
 			{% if current_pad and pad.id == current_pad.id %}
-			<a href="/pad/{{pad.id}}"><div class="sidebar-item-selected">{{pad.name}}</div></a>
+			<div class="sidebar-item-selected">
 			{% else %}
-			<a href="/pad/{{pad.id}}"><div class="sidebar-item">{{pad.name}}</div></a>
+			<div class="sidebar-item">
 			{% endif %}
+				<div id="trash" data-id="{{pad.id}}" class="fa fa-trash" title="Delete Pad" onclick="button_clicked(this)"></div>
+				<a href="/pad/{{pad.id}}">
+					<div class="pad-name">{{pad.name}}</div>
+				</a>
+			</div>
 			{% endfor %}
 		</div>
 

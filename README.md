@@ -21,6 +21,6 @@ Requirements
 7. Rserve
 
 Python requirements can be installed by running
-```python
+```bash
 pip install -r requirements.txt
 ```

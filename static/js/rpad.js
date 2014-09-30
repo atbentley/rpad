@@ -87,6 +87,9 @@ function button_clicked(button) {
         var text_block = new PAD.TextBlock(code_block.getIndex()+1);
         code_block.focus();
         break;
+    case 'trash':
+        async('DELETE', '/api/pad/'+button.dataset['id'], function(){});
+        break;
     }
 }
 

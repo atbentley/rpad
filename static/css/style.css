@@ -136,9 +136,6 @@ a {
 	margin: 0px;
 	line-height: 30px;
 	padding: 0px 10px;
-	color: #ddd;
-	font-weight: bold;
-	text-align: center;
 }
 
 .sidebar-item-selected {
@@ -150,9 +147,24 @@ a {
 	margin: 0px;
 	line-height: 30px;
 	padding: 0px 10px;
+}
+
+.pad-name {
 	color: #ddd;
 	font-weight: bold;
 	text-align: center;
+}
+
+.sidebar-item .fa, .sidebar-item-selected .fa {
+	color: #ddd;
+	font-size: 25px;
+	float: left;
+	line-height: 30px;
+	visibility: hidden;
+}
+
+.sidebar-item:hover .fa, .sidebar-item-selected:hover .fa {
+	visibility: visible;
 }
 
 .buttons {
