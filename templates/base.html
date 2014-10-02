@@ -12,7 +12,9 @@
 <body>
 	<div id="container">
 		<div id="sidebar">
-			<div class="sidebar-title">rpad.</div>
+			<a href="/">
+				<div class="sidebar-title">rpad.</div>
+			</a>
 			<div class="buttons">
 				<ul>
 					<a href='/new_pad'><li class="fa fa-pencil"></li></a>
@@ -27,7 +29,7 @@
 			{% else %}
 			<div class="sidebar-item">
 			{% endif %}
-				<div id="trash" data-id="{{pad.id}}" class="fa fa-trash" title="Delete Pad" onclick="button_clicked(this)"></div>
+				<div id="trash" data-id="{{pad.id}}" class="fa fa-trash-o" title="Delete Pad" onclick="button_clicked(this)"></div>
 				<a href="/pad/{{pad.id}}">
 					<div class="pad-name">{{pad.name}}</div>
 				</a>

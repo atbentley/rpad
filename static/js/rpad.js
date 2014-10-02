@@ -96,6 +96,8 @@ function button_clicked(button) {
 
 function update_pad(json) {
     json = JSON.parse(json);
+    PAD.id = json['id'];
+    PAD.name = json['name'];
     for (var i=0; i<json['blocks'].length; i++) {
         var block = json['blocks'][i];
         PAD.block_types[block.type].from_json(block);
