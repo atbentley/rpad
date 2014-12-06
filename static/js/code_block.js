@@ -22,7 +22,7 @@ PAD.CodeBlock.from_json = function(json) {
 
 PAD.CodeBlock.prototype.create_dom = function() {
     this.dom = document.createElement('div');
-    this.dom.setAttribute('class', 'block');
+    this.dom.setAttribute('class', 'block code');
     //this.dom.onclick = this.focus;
     this.in_line = document.createElement('div');
     this.in_line.setAttribute('class', 'in');
@@ -30,6 +30,7 @@ PAD.CodeBlock.prototype.create_dom = function() {
     this.in_line.spellcheck = false;
     //this.in_line.onmousedown = this.on_in_line_click;
     //this.in_line.onfocus = this.focus;
+    this.in_line.onfocus = this.focus.bind(this);
 
     this.dom.appendChild(this.in_line);
 }
@@ -69,8 +70,31 @@ PAD.CodeBlock.prototype.add_out_line = function(html) {
 
 
 PAD.CodeBlock.prototype.focus = function() {
-    PAD.Block.prototype.focus.bind(this)();
+    if (PAD.current_block == this) {
+        // Call came in from on_focus event while block was already
+        // focused.
+        return;
+    }
+
+    // Grab index of previously focused block
+    var prev_index = 0;
+    if (typeof PAD.current_block !== 'undefined') {
+        prev_index = PAD.current_block.getIndex();
+    }
+
+    PAD.Block.prototype.focus.bind(this)(); // Super
     this.in_line.focus();
+
+    if (prev_index > this.getIndex()) {
+        // If coming from a block below this one, place the caret at the end
+        // of the input.
+        var range = document.createRange();
+        var sel = window.getSelection();
+        range.setStart(this.in_line, 1);
+        range.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(range);
+    }
 }
 
 
@@ -115,8 +139,10 @@ PAD.CodeBlock.prototype.on_key_down = function(e) {
 
     case PAD.UP_KEY:
         var sel = window.getSelection();
-        if (sel.type == "Caret" && sel.baseOffset == 0) {
-            // Make the v cursor above the current line active
+        if (sel.type == "Caret" &&
+                this.getIndex() != 0 &&
+                sel.baseOffset == 0) {
+            // Make the block above active
             this.blur();
             PAD.blocks[this.getIndex()-1].focus();
             e.preventDefault();
@@ -125,10 +151,12 @@ PAD.CodeBlock.prototype.on_key_down = function(e) {
 
     case PAD.DOWN_KEY:
         var sel = window.getSelection();
-        if (sel.type == "Caret" && (sel.baseOffset == this.in_line.innerText.length ||
+        if (sel.type == "Caret" && 
+                this.getIndex() != PAD.blocks.length-1 &&
+                (sel.baseOffset == this.in_line.innerText.length ||
                 (sel.baseOffset == this.in_line.innerText.length-1 && 
                 this.in_line.innerText[sel.baseOffset] == '\n'))) {
-            // Make the v cursor below the current line active
+            // Make the block below active
             this.blur();
             PAD.blocks[this.getIndex()+1].focus();
             e.preventDefault();

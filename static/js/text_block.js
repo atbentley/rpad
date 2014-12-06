@@ -37,18 +37,28 @@ PAD.TextBlock.prototype.serialize = function () {
 
 PAD.TextBlock.prototype.focus = function() {
     if (PAD.current_block == this) {
+        // Call came in from on_focus event while block was already
+        // focused.
         return;
     }
+
+    // Grab index of previously focused block.
     var prev_index = 0;
     if (typeof PAD.current_block !== 'undefined') {
         prev_index = PAD.current_block.getIndex();
     }
-    PAD.Block.prototype.focus.bind(this)();
+    PAD.Block.prototype.focus.bind(this)(); // super
     this.dom.focus();
+
     if (prev_index > this.getIndex()) {
-        // Place caret at end of input
-        this.dom.selectionStart = this.dom.innerText.length;
-        this.dom.selectionEnd = this.dom.innerText.length;
+        // If coming from a block below this one, place the caret at the end
+        // of the input.
+        var range = document.createRange();
+        var sel = window.getSelection();
+        range.setStart(this.dom, 1);
+        range.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(range);
     }
 }
 
@@ -85,10 +95,12 @@ PAD.TextBlock.prototype.on_key_down = function(e) {
 
     case PAD.DOWN_KEY:
         var sel = window.getSelection();
-        if (sel.type == "Caret" && (sel.baseOffset == this.dom.innerText.length ||
+        if (sel.type == "Caret" &&
+                this.getIndex() != PAD.blocks.length-1 &&
+                (sel.baseOffset == this.dom.innerText.length ||
                 (sel.baseOffset == this.dom.innerText.length-1 && 
                 this.dom.innerText[sel.baseOffset] == '\n'))) {
-            // Make the v cursor below the current line active
+            // Make the block below active
             this.blur();
             PAD.blocks[this.getIndex()+1].focus();
             e.preventDefault();
