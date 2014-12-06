@@ -23,16 +23,6 @@ PAD.id = parseInt(document.URL.split('/').pop());
 PAD.name = 'untitled';
 PAD.block_types = [];
 
-// Additional JS files to load
-var require = [
-    '/static/js/async.js',
-    '/static/js/block.js',
-    '/static/js/code_block.js',
-    '/static/js/cursor_block.js',
-    '/static/js/text_block.js'];
-var loaded = -1;  // Count of additional JS files loaded
-
-
 function on_key_down(e) {
     switch (PAD.state) {
     case PAD.STATE_EDIT:
@@ -53,28 +43,6 @@ function on_key_down(e) {
         break;
     }
 }
-
-/**
- * Load all the required JS files.
- */
-function load_scripts() {
-    loaded += 1;
-    if (loaded == require.length) {
-        // Finished loading, begin execution
-        page = document.getElementById('page');
-        document.body.onkeydown = on_key_down;
-        async('GET', '/api/pad/' + PAD.id, update_pad);
-        //var code_block = new PAD.TextBlock();
-        //code_block.focus();
-    } else {
-        // Continue loading additional JS files
-        var script = document.createElement('script');
-        script.src = require[loaded];
-        script.onload = load_scripts;
-        document.getElementsByTagName('head')[0].appendChild(script);
-    }
-}
-
 
 function button_clicked(button) {
     switch (button.id) {
@@ -119,5 +87,18 @@ function generate_pad_json() {
     return JSON.stringify(data);
 }
 
-
-window.onload = load_scripts;
+/**
+ * Load all the required JS files.
+ */
+ requirejs([
+    'async',
+    'block',
+    'code_block',
+    'cursor_block',
+    'text_block'],
+    function() {
+        // Finished loading, begin execution
+        page = document.getElementById('page');
+        document.body.onkeydown = on_key_down;
+        async('GET', '/api/pad/' + PAD.id, update_pad);
+    });
