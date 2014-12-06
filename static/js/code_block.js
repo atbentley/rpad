@@ -31,7 +31,7 @@ PAD.CodeBlock.prototype.create_dom = function() {
     //this.in_line.onmousedown = this.on_in_line_click;
     //this.in_line.onfocus = this.focus;
     this.in_line.onfocus = this.focus.bind(this);
-
+    this.in_line.oninput = this.oninput.bind(this);
     this.dom.appendChild(this.in_line);
 }
 
@@ -97,6 +97,10 @@ PAD.CodeBlock.prototype.focus = function() {
     }
 }
 
+PAD.CodeBlock.prototype.oninput = function() {
+    this.dom.className = "block code dirty";
+}
+
 
 PAD.CodeBlock.prototype.blur = function() {
     this.in_line.blur();
@@ -104,6 +108,7 @@ PAD.CodeBlock.prototype.blur = function() {
 
 
 PAD.CodeBlock.prototype.on_code_evaluated = function(result) {
+    this.dom.className = "block code";
     this.delete_out_lines();
     result = JSON.parse(result);
     for (var i = 0; i < result.length; i++) {
