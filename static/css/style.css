@@ -279,7 +279,8 @@ a {
 	color: #333;
 	outline: 0px solid transparent;
 	padding: 5px;
-	white-space: pre;
+	white-space: pre-wrap;
+	word-wrap: break-word;
 }
 
 .block:hover {
