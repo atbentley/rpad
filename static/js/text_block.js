@@ -1,5 +1,8 @@
 PAD.TextBlock = function(insert_index) {
     PAD.Block.call(this, insert_index);
+    // Position of the caret, this is needed for splitting a text block
+    // when inserting new blocks.
+    this.caret = 0;
 }
 PAD.TextBlock.prototype = Object.create(PAD.Block.prototype);
 PAD.TextBlock.prototype.constructor = PAD.TextBlock;
@@ -21,6 +24,7 @@ PAD.TextBlock.prototype.create_dom = function() {
     this.dom.setAttribute('class', 'block text');
     this.dom.setAttribute('contenteditable', true);
     this.dom.onfocus = this.focus.bind(this);
+    this.dom.onblur = this.onblur.bind(this);
 }
 
 
@@ -65,6 +69,13 @@ PAD.TextBlock.prototype.focus = function() {
 
 PAD.TextBlock.prototype.blur = function() {
     this.dom.blur();
+}
+
+
+PAD.TextBlock.prototype.onblur = function() {
+    // Grab the position of the caret before the selection gets destroyed.
+    var sel = window.getSelection();
+    this.caret = sel.baseOffset;
 }
 
 

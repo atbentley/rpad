@@ -52,7 +52,27 @@ function button_clicked(button) {
         break;
     case 'btn_code':
         var code_block = new PAD.CodeBlock(PAD.current_block.getIndex()+1);
-        var text_block = new PAD.TextBlock(code_block.getIndex()+1);
+
+        if (PAD.current_block instanceof PAD.TextBlock) {
+            // Split the text block at the caret
+            var caret = PAD.current_block.last_caret_start;  // position of caret
+            var old_text = PAD.current_block.dom.innerText;
+            var text_1 = old_text.slice(0, caret);
+            var text_2 = old_text.slice(caret, old_text.length);
+
+            if (text_1.length == 0) {
+                // 
+                PAD.current_block.remove();
+            } else {
+                PAD.current_block.dom.innerText = text_1;
+            }
+            var text_block = new PAD.TextBlock(code_block.getIndex()+1);
+            text_block.dom.innerText = text_2;
+            if (text_block.dom.innerText[0] == "\n") {
+                // 
+                text_block.dom.innerText = text_2.substr(1, text_2.length);
+            }
+        }
         code_block.focus();
         break;
     case 'trash':
