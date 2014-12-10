@@ -86,7 +86,6 @@ PAD.TextBlock.prototype.on_key_down = function(e) {
         if (sel.type == "Caret" && sel.baseOffset == 0) {
             // Make the above block active
             if (this.getIndex() != 0) {
-                this.blur();
                 PAD.blocks[this.getIndex()-1].focus();
             }
             e.preventDefault();
@@ -101,7 +100,6 @@ PAD.TextBlock.prototype.on_key_down = function(e) {
                 (sel.baseOffset == this.dom.innerText.length-1 && 
                 this.dom.innerText[sel.baseOffset] == '\n'))) {
             // Make the block below active
-            this.blur();
             PAD.blocks[this.getIndex()+1].focus();
             e.preventDefault();
             break;

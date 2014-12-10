@@ -1,5 +1,6 @@
 PAD.CodeBlock = function(insert_index) {
     PAD.Block.call(this, insert_index);
+    this.selected = false;  // selection => priming for deletion
 }
 PAD.CodeBlock.prototype = Object.create(PAD.Block.prototype);
 PAD.CodeBlock.prototype.constructor = PAD.CodeBlock;
@@ -23,13 +24,16 @@ PAD.CodeBlock.from_json = function(json) {
 PAD.CodeBlock.prototype.create_dom = function() {
     this.dom = document.createElement('div');
     this.dom.setAttribute('class', 'block code');
-    //this.dom.onclick = this.focus;
     this.in_line = document.createElement('div');
     this.in_line.setAttribute('class', 'in');
     this.in_line.setAttribute('contenteditable', true);
     this.in_line.spellcheck = false;
-    //this.in_line.onmousedown = this.on_in_line_click;
-    //this.in_line.onfocus = this.focus;
+
+    // Clicking anywhere on the code block other than the input line
+    // should select the code block.
+    this.dom.onclick = this.select.bind(this);
+    this.in_line.onclick = function(event) {event.cancelBubble=true;};
+
     this.in_line.onfocus = this.focus.bind(this);
     this.in_line.oninput = this.oninput.bind(this);
     this.dom.appendChild(this.in_line);
@@ -83,7 +87,9 @@ PAD.CodeBlock.prototype.focus = function() {
     }
 
     PAD.Block.prototype.focus.bind(this)(); // Super
-    this.in_line.focus();
+    if (!this.selected) {
+        this.in_line.focus();
+    }
 
     if (prev_index > this.getIndex()) {
         // If coming from a block below this one, place the caret at the end
@@ -97,18 +103,30 @@ PAD.CodeBlock.prototype.focus = function() {
     }
 }
 
+
+PAD.CodeBlock.prototype.select = function() {
+    this.selected = true;
+    this.dom.style.outline = '1px solid black'
+    this.focus();
+}
+
+
 PAD.CodeBlock.prototype.oninput = function() {
     this.dom.className = "block code dirty";
 }
 
 
 PAD.CodeBlock.prototype.blur = function() {
-    this.in_line.blur();
+    if (PAD.current_block === this) {
+        this.in_line.blur();
+        this.selected = false;
+        this.dom.style.outline = '';
+    }
 }
 
 
 PAD.CodeBlock.prototype.on_code_evaluated = function(result) {
-    this.dom.className = "block code";
+    this.dom.className = "block code";  // Remove dirty class
     this.delete_out_lines();
     result = JSON.parse(result);
     for (var i = 0; i < result.length; i++) {
@@ -116,7 +134,6 @@ PAD.CodeBlock.prototype.on_code_evaluated = function(result) {
     }
     
     if (PAD.current_block == this) {
-        this.blur();
         PAD.blocks[this.getIndex()+1].focus();
     }
 }
@@ -142,13 +159,36 @@ PAD.CodeBlock.prototype.on_key_down = function(e) {
         }
         break;
 
+    case PAD.BACKSPACE_KEY:
+        if (this.selected) {
+            // Delete this block
+            var index = this.getIndex();
+            PAD.blocks[index+1].focus();  // Make below block active
+            this.remove();
+            // Need to check if deleting this block caused two text blocks to
+            // be one after the other, and merge them if so.
+            if (PAD.blocks[index-1] instanceof PAD.TextBlock &&
+                    PAD.blocks[index] instanceof PAD.TextBlock) {
+                // Add second text block's text to first one
+                PAD.blocks[index-1].dom.innerText += "\n" + 
+                        PAD.blocks[index].dom.innerText;
+                // Remove second text block
+                PAD.blocks[index].remove();
+            }
+            e.preventDefault();
+        }
+        break;
+
     case PAD.UP_KEY:
         var sel = window.getSelection();
-        if (sel.type == "Caret" &&
+        if (this.selected) {
+            // Make the block above active
+            PAD.blocks[this.getIndex()-1].focus();
+            e.preventDefault();
+        } else if (sel.type == "Caret" &&
                 this.getIndex() != 0 &&
                 sel.baseOffset == 0) {
             // Make the block above active
-            this.blur();
             PAD.blocks[this.getIndex()-1].focus();
             e.preventDefault();
         }
@@ -156,21 +196,19 @@ PAD.CodeBlock.prototype.on_key_down = function(e) {
 
     case PAD.DOWN_KEY:
         var sel = window.getSelection();
-        if (sel.type == "Caret" && 
+        if (this.selected) {
+            // Make the block below active
+            PAD.blocks[this.getIndex()+1].focus();
+            e.preventDefault();
+        } else if (sel.type == "Caret" && 
                 this.getIndex() != PAD.blocks.length-1 &&
                 (sel.baseOffset == this.in_line.innerText.length ||
                 (sel.baseOffset == this.in_line.innerText.length-1 && 
                 this.in_line.innerText[sel.baseOffset] == '\n'))) {
             // Make the block below active
-            this.blur();
             PAD.blocks[this.getIndex()+1].focus();
             e.preventDefault();
-            break;
         }
+        break;
     }
-}
-
-
-PAD.CodeBlock.prototype.on_in_line_click = function(e) {
-    this.focus();
 }

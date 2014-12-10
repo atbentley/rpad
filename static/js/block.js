@@ -83,7 +83,7 @@ PAD.Block.prototype.create_dom = function() {
  * This method should be extended.
  */
 PAD.Block.prototype.focus = function() {
-    if (PAD.current_block === 'undefined') {
+    if (typeof PAD.current_block != 'undefined') {
         PAD.current_block.blur();
     }
     PAD.current_block = this;
