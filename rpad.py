@@ -8,6 +8,7 @@ from flask.ext.restless import APIManager
 
 from models import db, Pad, Block
 from r import R
+from rchunker import RChunker
 
 html_parser = HTMLParser()
 
@@ -73,12 +74,19 @@ class rpad(Flask):
         return render_template('pad.html', current_pad=pad, pads=pads)
 
     def handle_r_eval(self):
-        exprs = request.args.get('expr')
-        exprs = html_parser.unescape(urllib.unquote(exprs))
+        # Get and decode R code
+        r_code = request.args.get('expr')
+        r_code = html_parser.unescape(urllib.unquote(r_code))
+        r_code = r_code.decode('utf-8', 'ignore')
+        # Chunk R code for individual execution
+        chunker = RChunker(r_code)
+        chunks = chunker.chunk()
+        # Execute R code chunks
+        results = []
         pad = int(request.args.get('pad'))
-        exprs = exprs.decode('utf-8', 'ignore')
-        result = self.r_conn[pad].eval(exprs)
-        return json.dumps([str(result)])
+        for chunk in chunks:
+            results.append(str(self.r_conn[pad].eval(chunk)))
+        return json.dumps(results)
 
 
 if __name__ == '__main__':
