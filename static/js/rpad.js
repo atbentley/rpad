@@ -55,7 +55,7 @@ function button_clicked(button) {
 
         if (PAD.current_block instanceof PAD.TextBlock) {
             // Split the text block at the caret
-            var caret = PAD.current_block.last_caret_start;  // position of caret
+            var caret = PAD.current_block.caret;  // position of caret
             var old_text = PAD.current_block.dom.innerText;
             var text_1 = old_text.slice(0, caret);
             var text_2 = old_text.slice(caret, old_text.length);
