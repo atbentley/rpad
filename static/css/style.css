@@ -140,6 +140,9 @@ a {
 	background: #333;
 	text-align: center;
 	text-shadow: #282828 -2px -2px;
+	outline: 1px dashed #d55;
+	outline-offset: -5px;
+	box-shadow: 0px 2px 2px #222;
 }
 
 .sidebar-item {
@@ -230,6 +233,14 @@ a {
 
 .dirty .out {
 	color: #aaa;
+}
+
+.image {
+	padding-bottom: 0px;
+}
+
+.image img {
+	max-width: 100%;
 }
 
 .v-cursor {

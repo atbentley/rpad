@@ -1,4 +1,5 @@
 import json
+import os
 import urllib
 from HTMLParser import HTMLParser
 
@@ -6,7 +7,7 @@ import pyRserve
 from flask import Flask, request, render_template, redirect, abort
 from flask.ext.restless import APIManager
 
-from models import db, Pad, Block
+from models import db, Pad, Block, Image
 from r import R
 from rchunker import RChunker
 
@@ -14,6 +15,8 @@ html_parser = HTMLParser()
 
 
 class rpad(Flask):
+    IMAGE_STORE = 'static/imagestore'
+
     def __init__(self, db):
         Flask.__init__(self, 'rpad')
 
@@ -34,9 +37,11 @@ class rpad(Flask):
         self.add_url_rule('/new_pad', 'new_pad', self.handle_new_pad)
         self.add_url_rule('/pad/<int:pad_id>', 'pad', self.handle_pad)
         self.add_url_rule('/r', 'r', self.handle_r_eval)
+        self.add_url_rule('/upload_image', 'upload_image',
+                          self.handle_upload_image, methods=['POST'])
 
         # API routing
-        self.api_manager.create_api(Pad, include_columns=['id', 'name'], 
+        self.api_manager.create_api(Pad, include_columns=['id', 'name'],
                                     collection_name='pads', methods=['GET'])
         self.api_manager.create_api(Pad, methods=['GET', 'POST', 'DELETE', 'PUT'])
         self.api_manager.create_api(Block, methods=['GET, POST', 'DELETE', 'PUT'])
@@ -87,6 +92,18 @@ class rpad(Flask):
         for chunk in chunks:
             results.append(str(self.r_conn[pad].eval(chunk)))
         return json.dumps(results)
+
+    def handle_upload_image(self):
+        file = request.files['file']
+        pad_id = request.args.get('pad_id')
+        if file:
+            file.save(os.path.join(self.IMAGE_STORE, file.filename))
+            image = Image(filename=file.filename, pad_id=pad_id)
+            db.session.add(image)
+            db.session.commit()
+            return '1'
+        else:
+            return '0'
 
 
 if __name__ == '__main__':
