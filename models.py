@@ -15,6 +15,7 @@ class Pad(db.Model):
     def __init__(self, name):
         self.name = name
 
+
 class Block(db.Model):
     TEXT = 0
     CODE = 1
@@ -24,4 +25,12 @@ class Block(db.Model):
     type = db.Column(db.Integer)
     position = db.Column(db.Integer)
     content = db.Column(db.Text)
+    pad_id = db.Column(db.Integer, db.ForeignKey('pad.id'))
+
+
+class Image(db.Model):
+    """"""
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    filename = db.Column(db.String)
     pad_id = db.Column(db.Integer, db.ForeignKey('pad.id'))
