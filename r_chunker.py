@@ -4,6 +4,7 @@ OPERATORS = [
     [1, ['+', '-', '*', '/', '^', '<', '>', '!', '|', '&']],
 ]
 
+
 class RChunker:
     """Take some R code and split it into chunks that can be independently
     executed.
@@ -12,8 +13,8 @@ class RChunker:
         ... bar <- function(baz) {
         ...     baz * 2
         ... }'''
-        >>> parser = RParser(code)
-        >>> chunks = parser.parse()
+        >>> chunker = RChunker(code)
+        >>> chunks = chunker.chunk()
         >>> print(chunks)
         ['foo <- 1:10\n', 'bar <- function(baz) {\n    baz * 2\n}']
 
@@ -79,7 +80,9 @@ class RChunker:
                 if (char == "\n" and parentheses_count == 0
                         and brace_count == 0 and bracket_count == 0
                         and not in_quote and not operator):
-                    chunks.append(chunk)
+                    if chunk and not chunk.isspace():
+                        # Chunk is not empty
+                        chunks.append(chunk)
                     chunk = ''
                 elif (char == "'" or char == "\""):
                     in_qoute = char
@@ -116,10 +119,11 @@ class RChunker:
         if (parentheses_count == 0 and brace_count == 0
                 and bracket_count == 0 and not in_quote
                 and not operator):
-            chunks.append(chunk)
+            if chunk and not chunk.isspace():
+                chunks.append(chunk)
         else:
-            # chunk had some open parenthesis, quotation marks or had a trailing
-            # operator, i.e. it was incomplete
+            # chunk had some open parenthesis, quotation marks or had a
+            # trailing operator, i.e. it was incomplete
             chunks.append(None)
 
         return chunks

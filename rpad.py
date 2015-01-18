@@ -3,13 +3,11 @@ import os
 import urllib
 from HTMLParser import HTMLParser
 
-import pyRserve
 from flask import Flask, request, render_template, redirect, abort
 from flask.ext.restless import APIManager
 
 from models import db, Pad, Block, Image
 from r import R
-from rchunker import RChunker
 
 html_parser = HTMLParser()
 
@@ -25,11 +23,7 @@ class rpad(Flask):
         self.api_manager = APIManager(self, flask_sqlalchemy_db=self.db)
         # Create R subprocess.
         # A single R instance will serve all pads using Rserve.
-        self.r_proc = R()
-
-        # Each pad will have their own pyRserve connection.
-        # self.r_conn[pad_id] => pyRserve connection
-        self.r_conn = {}
+        self.r = R()
 
         # Routing and URL rules:
         self.add_url_rule('/', 'index', self.handle_index)
@@ -43,8 +37,10 @@ class rpad(Flask):
         # API routing
         self.api_manager.create_api(Pad, include_columns=['id', 'name'],
                                     collection_name='pads', methods=['GET'])
-        self.api_manager.create_api(Pad, methods=['GET', 'POST', 'DELETE', 'PUT'])
-        self.api_manager.create_api(Block, methods=['GET, POST', 'DELETE', 'PUT'])
+        self.api_manager.create_api(Pad,
+                                    methods=['GET', 'POST', 'DELETE', 'PUT'])
+        self.api_manager.create_api(Block,
+                                    methods=['GET, POST', 'DELETE', 'PUT'])
 
     def handle_index(self):
         return self.handle_about()
@@ -68,29 +64,16 @@ class rpad(Flask):
             abort(404)
         pads = Pad.query.all()
 
-        # Check to see if this pad has a pyRserve connection
-        if pad_id in self.r_conn:
-            if self.r_conn[pad_id].isClosed:
-                # Re-open connection if it was closed
-                self.r_conn[pad_id].connect()
-        else:
-            self.r_conn[pad_id] = pyRserve.connect()
-
         return render_template('pad.html', current_pad=pad, pads=pads)
 
     def handle_r_eval(self):
-        # Get and decode R code
-        r_code = request.args.get('expr')
-        r_code = html_parser.unescape(urllib.unquote(r_code))
-        r_code = r_code.decode('utf-8', 'ignore')
-        # Chunk R code for individual execution
-        chunker = RChunker(r_code)
-        chunks = chunker.chunk()
-        # Execute R code chunks
-        results = []
+        if 'expr' not in request.args:
+            abort(400)
+
+        expr = html_parser.unescape(urllib.unquote(
+            request.args['expr'])).decode('utf-8', 'ignore')
         pad = int(request.args.get('pad'))
-        for chunk in chunks:
-            results.append(str(self.r_conn[pad].eval(chunk)))
+        results = map(str, self.r.eval(expr, pad))
         return json.dumps(results)
 
     def handle_upload_image(self):
