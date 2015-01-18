@@ -55,7 +55,9 @@ function on_key_down(e) {
  * a new block into the middle of a text block
  */
 function split_text_block(text_block) {
-    // Split the text block at the caret
+    // getIndex() + 2 because a newly inserted block exists at
+    // getIndex() + 1
+    var new_text_block = new PAD.TextBlock(text_block.getIndex()+2);
     var caret = text_block.caret;  // position of caret
     var old_text = text_block.dom.innerText;
     var text_1 = old_text.slice(0, caret);
@@ -66,9 +68,6 @@ function split_text_block(text_block) {
     } else {
         text_block.dom.innerText = text_1;
     }
-    // getIndex() + 2 because a newly inserted block exists at
-    // getIndex() + 1
-    var new_text_block = new PAD.TextBlock(text_block.getIndex()+2);
     new_text_block.dom.innerText = text_2;
     if (new_text_block.dom.innerText[0] == "\n") {
         // Remove spare line break
