@@ -1,5 +1,5 @@
 import numpy
-from . import _jinja_env
+from . import formatter, _jinja_env
 
 
 _html = """<table class='data'>
@@ -12,7 +12,8 @@ _html = """<table class='data'>
 _template = _jinja_env.from_string(_html)
 
 
-def format(result):
+@formatter('character')
+def format_character(result):
     if isinstance(result, numpy.ndarray):
         return _template.render(result=result)
     else:

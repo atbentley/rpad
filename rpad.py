@@ -8,8 +8,7 @@ from flask.ext.restless import APIManager
 
 from models import db, Pad, Block, Image
 from r import R
-from formatters import format, reload_formatters
-reload_formatters()
+from formatters import format
 
 html_parser = HTMLParser()
 
@@ -78,6 +77,7 @@ class rpad(Flask):
         results = self.r.eval(expr, pad)  # (result, type) pairs
         outputs = []
         for (result, type_) in results:
+            print type_, result
             outputs.append(format(result, type_))
         return json.dumps(outputs)
 

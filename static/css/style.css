@@ -280,6 +280,13 @@ a {
 	padding: 8px;
 }
 
+.r-error {
+	border: 1px solid #a44;
+	background: #d55;
+	border-radius: 5px;
+	padding: 5px;
+}
+
 .sub-heading {
 	font-family: "Andale Mono", AndaleMono, monospace;
 	font-size: 24px;
