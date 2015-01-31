@@ -124,6 +124,6 @@ class RChunker:
         else:
             # chunk had some open parenthesis, quotation marks or had a
             # trailing operator, i.e. it was incomplete
-            chunks.append(None)
+            chunks.append(chunk)
 
         return chunks

@@ -17,7 +17,7 @@ class R:
         # We use Rserve.dbg so that R doesn't get put into
         # daemon mode, this allows us to kill the process
         # using terminate().
-        # Since we are using debug mode (quite verbose we
+        # Since we are using debug mode (quite verbose) we
         # must also redirect stdout to devnull.
         cmd = ['R', 'CMD', 'Rserve.dbg']
         self.devnull = open(os.devnull, 'w')
@@ -47,6 +47,13 @@ class R:
             self.devnull.close()
 
     def eval(self, expr, conn=0):
+        """Evaluate an R expression on a particular connection and
+        return a list of (result, type) pairs, where type is the
+        actual R type of the result.
+
+        In the case that expr contains multiple expressions
+        (e.g. '1+1;2+2'), each expression will be evaluated independently.
+        """
         if conn not in self.connections:
             # Create connection if it doesn't exist
             self.connections[conn] = pyRserve.connect()
@@ -56,9 +63,24 @@ class R:
 
         results = []
         for chunk in RChunker(expr).chunk():
-            result = self.connections[conn].eval(chunk)
-            results.append(result)
-            # Set the .Last.value variable since pyRserve or Rserve
-            # doesn't do this for some reason.
-            self.connections[conn].r.__setattr__('.Last.value', result)
+            try:
+                result = self.connections[conn].eval(chunk)
+                if isinstance(result, pyRserve.rparser.Closure):
+                    # Result is most likely a function, I have not currently
+                    # come up with a good way to handle this situation yet.
+                    type_ = '__closure__'
+                else:
+                    # Set the .Last.value variable since pyRserve or Rserve
+                    # doesn't do this for some reason.
+                    self.connections[conn].r.__setattr__('.Last.value', result)
+                    # Get the type of .Last.value
+                    type_ = self.connections[conn].eval('class(.Last.value)')
+                    # Re-set .Last.value
+                    self.connections[conn].r.__setattr__('.Last.value', result)
+            except pyRserve.rexceptions.REvalError as error:
+                result = str(error)
+                if not result:
+                    result = 'Error: unable to parse R code'
+                type_ = '__error__'
+            results.append((result, type_))
         return results

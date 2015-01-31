@@ -8,6 +8,8 @@ from flask.ext.restless import APIManager
 
 from models import db, Pad, Block, Image
 from r import R
+from formatters import format, reload_formatters
+reload_formatters()
 
 html_parser = HTMLParser()
 
@@ -73,8 +75,11 @@ class rpad(Flask):
         expr = html_parser.unescape(urllib.unquote(
             request.args['expr'])).decode('utf-8', 'ignore')
         pad = int(request.args.get('pad'))
-        results = map(str, self.r.eval(expr, pad))
-        return json.dumps(results)
+        results = self.r.eval(expr, pad)  # (result, type) pairs
+        outputs = []
+        for (result, type_) in results:
+            outputs.append(format(result, type_))
+        return json.dumps(outputs)
 
     def handle_upload_image(self):
         file = request.files['file']
